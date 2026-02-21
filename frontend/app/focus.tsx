@@ -127,6 +127,10 @@ export default function FocusScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       if (progress >= 100) {
+        if (unlockTimerRef.current) {
+          clearInterval(unlockTimerRef.current);
+          unlockTimerRef.current = null;
+        }
         handleEmergencyUnlock();
       }
     }, 1000);
@@ -142,13 +146,21 @@ export default function FocusScreen() {
     }
   };
 
-  const handleEmergencyUnlock = () => {
+  const handleEmergencyUnlock = async () => {
+    // Clear all timers first
     if (unlockTimerRef.current) {
       clearInterval(unlockTimerRef.current);
+      unlockTimerRef.current = null;
     }
     if (countdownTimerRef.current) {
       clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
     }
+
+    // Clean up storage
+    await AsyncStorage.removeItem('activeSessionId');
+    await AsyncStorage.removeItem('sessionDuration');
+    await AsyncStorage.removeItem('sessionQuote');
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
 
@@ -158,10 +170,7 @@ export default function FocusScreen() {
       [
         {
           text: 'OK',
-          onPress: async () => {
-            await AsyncStorage.removeItem('activeSessionId');
-            await AsyncStorage.removeItem('sessionDuration');
-            await AsyncStorage.removeItem('sessionQuote');
+          onPress: () => {
             router.back();
           },
         },
