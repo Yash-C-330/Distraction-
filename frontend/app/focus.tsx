@@ -95,21 +95,30 @@ export default function FocusScreen() {
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
+      // Show success message
+      const message = leftAppCount > 0 
+        ? `Great work! You've completed your focus session.\n\nNote: You left the app ${leftAppCount} time(s) during this session.`
+        : `Great work! You've completed your focus session and stayed focused throughout! 🎉`;
+
       Alert.alert(
-        'Session Complete! 🎉',
-        `Great work! You've completed your focus session.${leftAppCount > 0 ? `\n\nNote: You left the app ${leftAppCount} time(s) during this session.` : ''}`,
+        'Session Complete!',
+        message,
         [
           {
             text: 'OK',
-            onPress: () => router.back(),
+            onPress: () => router.replace('/'),
           },
         ],
         { cancelable: false }
       );
     } catch (error) {
       console.error('Error completing session:', error);
-      Alert.alert('Error', 'Failed to save session data');
-      router.back();
+      Alert.alert('Error', 'Failed to save session data', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/'),
+        },
+      ]);
     }
   };
 
