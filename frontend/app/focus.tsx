@@ -56,10 +56,10 @@ export default function FocusScreen() {
 
   const handleAppStateChange = (nextAppState: string) => {
     if (
-      appStateRef.current.match(/active/) &&
-      nextAppState.match(/inactive|background/)
+      appStateRef.current === 'active' &&
+      nextAppState === 'background'
     ) {
-      // User left the app
+      // User truly left the app (went to background)
       setLeftAppCount((prev) => prev + 1);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     }
